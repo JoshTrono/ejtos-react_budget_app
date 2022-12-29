@@ -2,32 +2,40 @@ import React, { useContext, useState } from "react";
 import { AppContext } from "../context/AppContext";
 
 const Budget = () => {
-  const { budget, dispatch } = useContext(AppContext);
-  const [newBudget, setbudget] = useState(budget);
+  const { dispatch, budget, expenses } = useContext(AppContext);
 
-  // took the dispatch to submit a appreducer that take the set_budget input
-  // with the new budget which is the newbudget variable origionally
-  // the budget when initiallized but changed whenever the screen changes.
+  // console.log(" is the budget. " + newBudget + " is the new budget.");
 
-  const submitEvent = () => {
-    dispatch({
-      type: "SET_BUDGET",
-      payload: newBudget,
-    });
+  const changeBudget = (val) => {
+    const totalExpenses = expenses.reduce((total, item) => {
+      return (total += item.cost);
+    }, 0);
+
+    if (val < totalExpenses) {
+      alert("You cannot reduce the budget that is already allocated!");
+    } else if (val >= 20000) {
+      alert("The budget can not be above 20,000");
+    } else {
+      dispatch({
+        type: "SET_BUDGET",
+        payload: val,
+      });
+    }
   };
 
-  const twoCalls = (event) => {
-    setbudget(event.target.value);
-    submitEvent();
-  };
+  // const twoCalls = (event) => {
+  //   setbudget(event.target.value);
+  //   submitEvent();
+  // };
   return (
     <div className="alert alert-secondary">
       <span>
         Budget: £
         <input
           type="number"
-          value={newBudget}
-          onChange={(e) => twoCalls(e)}
+          step="10"
+          value={budget}
+          onInput={(event) => changeBudget(event.target.value)}
         ></input>
       </span>
     </div>
